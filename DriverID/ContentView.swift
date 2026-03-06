@@ -2,58 +2,33 @@
 //  ContentView.swift
 //  DriverID
 //
-//  Created by Zihong Lin on 2/28/26.
+//  Created by Zihong Lin on 3/5/26.
 //
+
 
 import SwiftUI
 
 struct ContentView: View {
     @StateObject private var motion = MotionManager()
-    @State private var isRunning = false
-        
+    @StateObject private var driverStore = DriverStore()
+    
     var body: some View {
-        VStack(spacing: 25) {
-            
-            Text("Driver Motion Monitor")
-                .font(.title)
-            
-            VStack(spacing: 12) {
-                
-                Text("Acceleration (g)")
-                    .font(.headline)
-                
-                Text("X: \(motion.accelX, specifier: "%.3f")")
-                Text("Y: \(motion.accelY, specifier: "%.3f")")
-                Text("Z: \(motion.accelZ, specifier: "%.3f")")
-                
-                Divider().padding(.vertical, 8)
-                
-                Text("Gyroscope (rad/s)")
-                    .font(.headline)
-                
-                Text("X: \(motion.gyroX, specifier: "%.3f")")
-                Text("Y: \(motion.gyroY, specifier: "%.3f")")
-                Text("Z: \(motion.gyroZ, specifier: "%.3f")")
-                
-            }
-            .font(.system(size: 20, weight: .medium, design: .monospaced))
-            
-            Button(isRunning ? "Stop Recording" : "Start Recording") {
-                if isRunning {
-                    motion.stop()
-                } else {
-                    motion.start()
+        TabView {
+            RecordView(motion: motion, driverStore: driverStore)
+                .tabItem {
+                    Label("Record", systemImage: "waveform.path")
                 }
-                isRunning.toggle()
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(isRunning ? .red : .green)
-            .controlSize(.large)
-            .padding(.horizontal)
             
-            Spacer()
+            DriversView(driverStore: driverStore)
+                .tabItem {
+                    Label("Drivers", systemImage: "person.2")
+                }
+            
+            SensorView(motion: motion)
+                .tabItem {
+                    Label("Sensor", systemImage: "gyroscope")
+                }
         }
-        .padding()
     }
 }
 
